@@ -12,9 +12,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional, but recommended
 
     db.init_app(app)
-
-    # Initialize CORS
-    CORS(app)
+    CORS(app)  # Enable CORS
 
     from resources.drink_resource import DrinkResource, DrinkList
 
@@ -26,6 +24,7 @@ def create_app():
 
     return app
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)
+# Remove the following lines for production
+# if __name__ == '__main__':
+#     app = create_app()
+#     app.run(debug=True)
