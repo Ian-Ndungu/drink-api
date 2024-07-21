@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 db = SQLAlchemy()
 
@@ -11,6 +12,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional, but recommended
 
     db.init_app(app)
+
+    # Initialize CORS
+    CORS(app)
 
     from resources.drink_resource import DrinkResource, DrinkList
 
