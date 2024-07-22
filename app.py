@@ -37,7 +37,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            return 'Invalid credentials', 401
+            return 'Invalid credentials'
     return render_template('login.html')
 
 @app.route('/logout')
@@ -53,11 +53,11 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST']:
+    if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         if User.query.filter_by(username=username).first():
-            return 'Username already exists', 400
+            return 'Username already exists'
         new_user = User(username=username)
         new_user.set_password(password)
         db.session.add(new_user)
