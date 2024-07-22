@@ -9,10 +9,10 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///drinks.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'your_secret_key'  
+    app.config['SECRET_KEY'] = 'fd11661a8990847fb941e0ae15a6439c2f548c3976019038'  
 
-    db.init_app(app)  # Initialize the database with the app
-    CORS(app)  # Enable CORS
+    db.init_app(app)
+    CORS(app)  
     api = Api(app)
 
     login_manager = LoginManager()
