@@ -7,7 +7,7 @@ from resources.drink_resource import DrinkResource, DrinkList
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///drinks.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional, but recommended
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
 
     db.init_app(app)  # Initialize the database with the app
     CORS(app)  # Enable CORS
