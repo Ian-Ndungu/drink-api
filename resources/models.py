@@ -14,7 +14,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     drink_id = db.Column(db.Integer, db.ForeignKey('drink.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    customer_name = db.Column(db.String(80), nullable=False)
+    customer_email = db.Column(db.String(80), nullable=False)
     order_time = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     drink = db.relationship('Drink', back_populates='orders')
@@ -24,7 +24,6 @@ Drink.orders = db.relationship('Order', order_by=Order.id, back_populates='drink
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     profile_picture = db.Column(db.String(255))
