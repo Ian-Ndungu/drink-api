@@ -3,6 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    drink_id = db.Column(db.Integer, db.ForeignKey('drink.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    customer_email = db.Column(db.String(80), nullable=False)
+    order_time = db.Column(db.DateTime, default=db.func.current_timestamp())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    drink = db.relationship('Drink', back_populates='orders')
+    user = db.relationship('User', backref='orders')
+
 class Drink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -10,16 +21,7 @@ class Drink(db.Model):
     category = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False)
 
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    drink_id = db.Column(db.Integer, db.ForeignKey('drink.id'), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    customer_email = db.Column(db.String(80), nullable=False)
-    order_time = db.Column(db.DateTime, default=db.func.current_timestamp())
-    
-    drink = db.relationship('Drink', back_populates='orders')
-
-Drink.orders = db.relationship('Order', order_by=Order.id, back_populates='drink')
+    orders = db.relationship('Order', order_by=Order.id, back_populates='drink')
 
 class User(db.Model):
     __tablename__ = 'users'
