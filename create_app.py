@@ -14,4 +14,7 @@ def create_app():
     api.add_resource(DrinkResource, '/drinks/<int:drink_id>')
     api.add_resource(DrinkList, '/drinks')
 
+    from resources.user_resource import UserResource
+    api.add_resource(UserResource, '/api/users')
+
     return app
