@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from sqlalchemy.exc import IntegrityError
 from .models import db, User
 import bcrypt
 
@@ -18,8 +19,16 @@ class UserResource(Resource):
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) if password else None
 
         new_user = User(email=email, password_hash=password_hash, profile_picture=profile_picture)
-        db.session.add(new_user)
-        db.session.commit()
+        
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return {'message': 'A user with this email already exists.'}, 400
+        except Exception as e:
+            db.session.rollback()
+            return {'message': f'An error occurred: {str(e)}'}, 500
 
         return {
             'message': 'User profile created successfully',
@@ -44,45 +53,21 @@ class UserResource(Resource):
         }, 200
 
     def put(self, user_id):
-        args = user_parser.parse_args()
-        email = args['email']
-        password = args['password']
-        profile_picture = args.get('profile_picture')
-
-        user = User.query.get(user_id)
-        if user is None:
-            return {'message': 'User not found'}, 404
-
-        # Update user details
-        user.email = email
-        if password:
-            user.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        if profile_picture:
-            user.profile_picture = profile_picture
-        
-        db.session.commit()
-
-        return {
-            'message': 'User profile updated successfully',
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'profile_picture': user.profile_picture,
-                'created_at': user.created_at
-            }
-        }, 200
+        return self._update_user(user_id, partial=False)
 
     def patch(self, user_id):
+        return self._update_user(user_id, partial=True)
+
+    def _update_user(self, user_id, partial):
         args = user_parser.parse_args()
-        email = args['email']
-        password = args['password']
-        profile_picture = args.get('profile_picture')
+        email = args['email'] if not partial or args['email'] else None
+        password = args['password'] if not partial or args['password'] else None
+        profile_picture = args.get('profile_picture') if not partial or args['profile_picture'] else None
 
         user = User.query.get(user_id)
         if user is None:
             return {'message': 'User not found'}, 404
 
-        # Update only provided details
         if email:
             user.email = email
         if password:
@@ -90,7 +75,11 @@ class UserResource(Resource):
         if profile_picture:
             user.profile_picture = profile_picture
         
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return {'message': f'An error occurred: {str(e)}'}, 500
 
         return {
             'message': 'User profile updated successfully',
