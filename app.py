@@ -21,7 +21,7 @@ def create_app():
     api.add_resource(DrinkList, '/api/drinks')
     api.add_resource(DrinkCategoryResource, '/api/drinks/category/<string:category>')
     api.add_resource(OrderResource, '/api/orders', '/api/orders/<int:order_id>') 
-    api.add_resource(UserResource, '/api/users/<int:user_id>')
+    api.add_resource(UserResource, '/api/users')
     api.add_resource(ChatResource, '/api/messages', '/api/messages/<int:message_id>')
     
     with app.app_context():
