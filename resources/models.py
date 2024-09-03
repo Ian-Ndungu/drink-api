@@ -20,18 +20,20 @@ class Order(db.Model):
     order_time = db.Column(db.DateTime, default=datetime.utcnow)
     
     drink = db.relationship('Drink', back_populates='orders')
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Ensure 'user.id' matches the actual table name
     user = db.relationship('User', back_populates='orders')
 
 class User(db.Model):
-    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    profile_picture = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    profile_picture = db.Column(db.String(256), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Fixed import
 
-    orders = db.relationship('Order', back_populates='user')
+    orders = db.relationship('Order', back_populates='user')  # Added relationship to orders
+
+    def __repr__(self):
+        return f'<User {self.email}>'
 
 class Message(db.Model):
     __tablename__ = 'messages'

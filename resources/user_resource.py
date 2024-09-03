@@ -3,9 +3,10 @@ from sqlalchemy.exc import IntegrityError
 from .models import db, User
 import bcrypt
 
+# Set up argument parser
 user_parser = reqparse.RequestParser()
 user_parser.add_argument('email', type=str, required=True, help='Email is required')
-user_parser.add_argument('password', type=str, help='Password is required')
+user_parser.add_argument('password', type=str, required=True, help='Password is required')
 user_parser.add_argument('profile_picture', type=str, help='Profile picture URL')
 
 class UserResource(Resource):
@@ -16,10 +17,10 @@ class UserResource(Resource):
         profile_picture = args.get('profile_picture')
 
         # Hash the password before storing
-        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) if password else None
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
         new_user = User(email=email, password_hash=password_hash, profile_picture=profile_picture)
-        
+
         try:
             db.session.add(new_user)
             db.session.commit()
