@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
 
 def create_app():
@@ -14,7 +15,8 @@ def create_app():
     api.add_resource(DrinkResource, '/drinks/<int:drink_id>')
     api.add_resource(DrinkList, '/drinks')
 
-    from resources.user_resource import UserResource
-    api.add_resource(UserResource, '/api/users')
+    from resources.user_resource import UserResource,UserList
+    api.add_resource(UserResource, '/api/users/<int:user_id>')
+    api.add_resource(UserList, '/api/users')
 
     return app

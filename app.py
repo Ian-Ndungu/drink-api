@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from resources.models import db
 from resources.drink_resource import DrinkList, DrinkResource, DrinkCategoryResource
 from resources.order_resource import OrderResource
-from resources.user_resource import UserResource
+from resources.user_resource import UserResource,UserList
 from resources.chat_resource import ChatResource
 
 def create_app():
@@ -26,7 +26,8 @@ def create_app():
     api.add_resource(DrinkList, '/api/drinks')
     api.add_resource(DrinkCategoryResource, '/api/drinks/category/<string:category>')
     api.add_resource(OrderResource, '/api/orders', '/api/orders/<int:order_id>')
-    api.add_resource(UserResource, '/api/users')
+    api.add_resource(UserResource, '/api/users/<int:user_id>')
+    api.add_resource(UserList, '/api/users')
     api.add_resource(ChatResource, '/api/messages', '/api/messages/<int:message_id>')
 
     return app

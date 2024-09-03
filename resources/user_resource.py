@@ -9,7 +9,19 @@ user_parser.add_argument('email', type=str, required=True, help='Email is requir
 user_parser.add_argument('password', type=str, required=True, help='Password is required')
 user_parser.add_argument('profile_picture', type=str, help='Profile picture URL')
 
-class UserResource(Resource):
+class UserList(Resource):
+    def get(self):
+        users = User.query.all()
+        return [
+            {
+                'id': user.id,
+                'email': user.email,
+                'profile_picture': user.profile_picture,
+                'created_at': user.created_at.isoformat()
+            }
+            for user in users
+        ], 200
+
     def post(self):
         args = user_parser.parse_args()
         email = args['email']
@@ -37,10 +49,11 @@ class UserResource(Resource):
                 'id': new_user.id,
                 'email': new_user.email,
                 'profile_picture': new_user.profile_picture,
-                'created_at': new_user.created_at
+                'created_at': new_user.created_at.isoformat()
             }
         }, 201
 
+class UserResource(Resource):
     def get(self, user_id):
         user = User.query.get(user_id)
         if user is None:
@@ -50,7 +63,7 @@ class UserResource(Resource):
             'id': user.id,
             'email': user.email,
             'profile_picture': user.profile_picture,
-            'created_at': user.created_at
+            'created_at': user.created_at.isoformat()
         }, 200
 
     def put(self, user_id):
@@ -88,6 +101,15 @@ class UserResource(Resource):
                 'id': user.id,
                 'email': user.email,
                 'profile_picture': user.profile_picture,
-                'created_at': user.created_at
+                'created_at': user.created_at.isoformat()
             }
         }, 200
+
+    def delete(self, user_id):
+        user = User.query.get(user_id)
+        if user is None:
+            return {'message': 'User not found'}, 404
+
+        db.session.delete(user)
+        db.session.commit()
+        return {'message': 'User deleted successfully'}, 200
